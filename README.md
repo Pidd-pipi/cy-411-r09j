@@ -26,7 +26,8 @@ docker compose down
 - 用户注册、登录、JWT 认证和 RBAC 权限校验
 - 活动记录新增、编辑、删除、分类筛选和分页列表
 - CarbonFactor 按地区与分类匹配并自动计算 `carbon_value`
-- 仪表盘展示今日、本周、本月碳排放和趋势图
+- 减排台账按日期登记措施、减少量和单位，同一天同一措施只保留一条，重复提交返回 409 拦截；记录可调整、可移除，改动后按新日期重新汇总
+- 仪表盘展示今日、本周、本月的原排放、减排量与净排放及趋势对比（没有登记减排时沿用原有口径）
 - 目标管理展示目标完成进度和到期区间
 - 排行榜按地区和时间段查看用户低碳排名
 - 管理员查看操作审计日志
@@ -114,12 +115,14 @@ npm run dev
 - `db` 配置 healthcheck，`backend` 等待数据库 healthy，`frontend` 等待后端 healthy。
 - 前端暴露 `18411:80`，后端暴露 `19411:3000`，数据库暴露 `3306:3306`。
 - 如端口冲突，修改 `.env` 中 `FRONTEND_PORT`、`BACKEND_PORT`、`DB_PORT` 后重新执行 `docker compose up -d`。
+- `database/init.sql` 只在数据卷首次初始化时执行。已有数据卷升级到含 `reductions` 表的版本时，可执行 `docker compose down -v` 后重新 `up -d`（会清空数据），或在 `.env` 中设置 `TYPEORM_SYNC=true` 让 TypeORM 自动补齐新表。
 
 ## 核心实体贯穿全栈
 
 - User：`database/init.sql` → `backend/src/models/user.ts` → `backend/src/services/userService.ts` → `backend/src/controllers/userController.ts` → `backend/src/routes/users.ts` → `frontend/src/api/user.ts` → `frontend/src/stores/userStore.ts` → `frontend/src/pages/Profile.tsx`
 - Activity：`database/init.sql` → `backend/src/models/activity.ts` → `backend/src/services/activityService.ts` → `backend/src/controllers/activityController.ts` → `backend/src/routes/activities.ts` → `frontend/src/api/activity.ts` → `frontend/src/stores/activityStore.ts` → `frontend/src/pages/Activities.tsx`
 - Goal：`database/init.sql` → `backend/src/models/goal.ts` → `backend/src/services/goalService.ts` → `backend/src/controllers/goalController.ts` → `backend/src/routes/goals.ts` → `frontend/src/api/goal.ts` → `frontend/src/stores/goalStore.ts` → `frontend/src/pages/Goals.tsx`
+- Reduction（减排台账）：`database/init.sql`（`uk_reduction_user_date_measure` 唯一键）→ `backend/src/models/reduction.ts` → `backend/src/services/reductionService.ts` → `backend/src/controllers/reductionController.ts` → `backend/src/routes/reductions.ts` → `frontend/src/api/reduction.ts` → `frontend/src/stores/reductionStore.ts` → `frontend/src/pages/Reductions.tsx`，并汇入 `frontend/src/hooks/useCarbonStats.ts` 与 `frontend/src/pages/Dashboard.tsx` 的原排放/减排量/净排放口径
 - CarbonFactor：`database/init.sql` → `backend/src/models/carbonFactor.ts` → `backend/src/services/factorService.ts` → `backend/src/controllers/factorController.ts` → `backend/src/routes/factors.ts` → `frontend/src/api/factor.ts` → `frontend/src/pages/Activities.tsx`
 
 ## 横切关注点

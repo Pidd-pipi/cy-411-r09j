@@ -64,6 +64,19 @@ CREATE TABLE IF NOT EXISTS goals (
   KEY idx_goal_user_status (user_id, status)
 );
 
+CREATE TABLE IF NOT EXISTS reductions (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  measure VARCHAR(64) NOT NULL,
+  reduction_value DECIMAL(12,2) NOT NULL,
+  unit VARCHAR(32) NOT NULL,
+  record_date DATE NOT NULL,
+  note VARCHAR(255) NULL,
+  CONSTRAINT fk_reductions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uk_reduction_user_date_measure (user_id, record_date, measure),
+  KEY idx_reduction_user_date (user_id, record_date)
+);
+
 CREATE TABLE IF NOT EXISTS audit_logs (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   user_id BIGINT NULL,
@@ -107,6 +120,11 @@ INSERT IGNORE INTO activities (id, user_id, factor_id, category, sub_type, amoun
 INSERT IGNORE INTO goals (id, user_id, title, target_value, period_type, start_date, end_date, status) VALUES
   (1, 1, 'Keep June emissions under 120 kg', 120.00, 'month', DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01'), LAST_DAY(CURRENT_DATE()), 'active'),
   (2, 1, 'Reduce transport carbon this week', 20.00, 'week', DATE_SUB(CURRENT_DATE(), INTERVAL WEEKDAY(CURRENT_DATE()) DAY), DATE_ADD(DATE_SUB(CURRENT_DATE(), INTERVAL WEEKDAY(CURRENT_DATE()) DAY), INTERVAL 6 DAY), 'active');
+
+INSERT IGNORE INTO reductions (id, user_id, measure, reduction_value, unit, record_date, note) VALUES
+  (1, 1, 'metro-instead-of-car', 2.80, 'kg CO2e', CURRENT_DATE(), 'Commute switched from car to metro'),
+  (2, 1, 'led-retrofit', 1.50, 'kg CO2e', DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY), 'Office lighting LED retrofit'),
+  (3, 2, 'solar-water-heater', 3.20, 'kg CO2e', DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY), 'Store solar water heater');
 
 INSERT IGNORE INTO audit_logs (id, user_id, action, entity, entity_id, detail, ip) VALUES
   (1, 1, 'seed', 'System', 1, 'System[id=1] seed completed: demo data ready', '127.0.0.1');

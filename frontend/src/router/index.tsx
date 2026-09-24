@@ -2,6 +2,7 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { AppShell } from '../App';
 import { Dashboard } from '../pages/Dashboard';
 import { Activities } from '../pages/Activities';
+import { Reductions } from '../pages/Reductions';
 import { Goals } from '../pages/Goals';
 import { Ranking } from '../pages/Ranking';
 import { Profile } from '../pages/Profile';
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'activities', element: <Activities /> },
+      { path: 'reductions', element: <Reductions /> },
       { path: 'goals', element: <Goals /> },
       { path: 'ranking', element: <Ranking /> },
       { path: 'profile', element: <Profile /> },

@@ -48,6 +48,16 @@ export interface Goal {
   progress?: number;
 }
 
+export interface Reduction {
+  id: number;
+  userId: number;
+  measure: string;
+  reductionValue: string;
+  unit: string;
+  recordDate: string;
+  note?: string | null;
+}
+
 export interface AuditLog {
   id: number;
   userId?: number | null;
