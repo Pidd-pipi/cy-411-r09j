@@ -51,6 +51,20 @@ CREATE TABLE IF NOT EXISTS activities (
   KEY idx_activity_category (category)
 );
 
+CREATE TABLE IF NOT EXISTS reduction_records (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  measure VARCHAR(128) NOT NULL,
+  reduction_value DECIMAL(12,2) NOT NULL,
+  unit VARCHAR(32) NOT NULL,
+  record_date DATE NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_reductions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uk_reduction_user_date_measure (user_id, record_date, measure),
+  KEY idx_reduction_user_date (user_id, record_date)
+);
+
 CREATE TABLE IF NOT EXISTS goals (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   user_id BIGINT NOT NULL,
@@ -103,6 +117,11 @@ INSERT IGNORE INTO activities (id, user_id, factor_id, category, sub_type, amoun
   (3, 1, 4, 'food', 'beef-meal', 1.00, 'meal', 6.20, DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY), 'Client lunch'),
   (4, 2, 6, 'energy', 'electricity', 26.00, 'kWh', 13.78, DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY), 'Store energy'),
   (5, 3, 7, 'transport', 'bus', 18.00, 'km', 1.60, CURRENT_DATE(), 'Supplier visit');
+
+INSERT IGNORE INTO reduction_records (id, user_id, measure, reduction_value, unit, record_date) VALUES
+  (1, 1, 'metro instead of driving', 3.20, 'kg CO2e', CURRENT_DATE()),
+  (2, 1, 'air-conditioner set to 26C', 1.80, 'kg CO2e', DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)),
+  (3, 2, 'LED lighting retrofit', 2.40, 'kg CO2e', DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY));
 
 INSERT IGNORE INTO goals (id, user_id, title, target_value, period_type, start_date, end_date, status) VALUES
   (1, 1, 'Keep June emissions under 120 kg', 120.00, 'month', DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01'), LAST_DAY(CURRENT_DATE()), 'active'),

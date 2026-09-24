@@ -1,5 +1,6 @@
 import { ActivityCategory } from './activity';
 import { GoalStatus } from './goal';
+import { ReductionUnit } from './reduction';
 
 export const LogTemplates = {
   USER_REGISTER_START: 'User[email={email}] register start',
@@ -19,6 +20,15 @@ export const LogTemplates = {
   ACTIVITY_UPDATE_SUCCESS: 'Activity[id={id}] update success carbon_value={carbonValue}',
   ACTIVITY_UPDATE_FAILED: 'Activity[id={id}] update failed: {field} {reason}',
   ACTIVITY_DELETE_SUCCESS: 'Activity[id={id}] delete success',
+  REDUCTION_LIST_START: `ReductionRecord list start unit values=${Object.values(ReductionUnit).join(',')}`,
+  REDUCTION_CREATE_START: 'ReductionRecord[user_id={userId}] create start measure={measure} date={recordDate}',
+  REDUCTION_CREATE_SUCCESS: 'ReductionRecord[id={id}] create success reduction_value={reductionValue} {unit}',
+  REDUCTION_CREATE_FAILED: 'ReductionRecord[id={id}] create failed: {field} {reason}',
+  REDUCTION_UPDATE_START: 'ReductionRecord[id={id}] update start fields={fields}',
+  REDUCTION_UPDATE_SUCCESS: 'ReductionRecord[id={id}] update success date={recordDate} reduction_value={reductionValue}',
+  REDUCTION_UPDATE_FAILED: 'ReductionRecord[id={id}] update failed: {field} {reason}',
+  REDUCTION_DELETE_SUCCESS: 'ReductionRecord[id={id}] delete success',
+  REDUCTION_TOTAL_CALCULATED: 'ReductionRecord[user_id={userId}] total calculated range={start}~{end} reduction={reduction} net={net}',
   GOAL_LIST_START: `Goal list start statuses=${Object.values(GoalStatus).join(',')}`,
   GOAL_CREATE_START: 'Goal[user_id={userId}] create start status={status}',
   GOAL_CREATE_SUCCESS: 'Goal[id={id}] create success target_value={targetValue}',

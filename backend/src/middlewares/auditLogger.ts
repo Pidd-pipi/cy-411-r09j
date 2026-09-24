@@ -14,8 +14,8 @@ export class AuditLogger implements NestInterceptor {
       tap((response: any) => {
         const method = request.method.toUpperCase();
         if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) return;
-        const entity = request.auditEntity || response?.activity?.constructor?.name || response?.goal?.constructor?.name || 'RouteMutation';
-        const entityId = request.auditEntityId || response?.activity?.id || response?.goal?.id || response?.factor?.id || null;
+        const entity = request.auditEntity || response?.activity?.constructor?.name || response?.goal?.constructor?.name || response?.reduction?.constructor?.name || 'RouteMutation';
+        const entityId = request.auditEntityId || response?.activity?.id || response?.goal?.id || response?.reduction?.id || response?.factor?.id || null;
         const action = request.auditAction || `${method} ${request.path}`;
         logTemplate('info', 'AUDIT_WRITE_START', { entity, action });
         void this.auditLogService.write({

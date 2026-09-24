@@ -1,5 +1,6 @@
 import { ActivityCategory } from '../constants/activity';
 import { GoalStatus } from '../constants/goal';
+import { ReductionUnit } from '../constants/reduction';
 
 export interface User {
   id: number;
@@ -33,6 +34,17 @@ export interface Activity {
   recordDate: string;
   note?: string | null;
   factor?: CarbonFactor | null;
+}
+
+export interface ReductionRecord {
+  id: number;
+  userId: number;
+  measure: string;
+  reductionValue: string;
+  unit: ReductionUnit;
+  recordDate: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Goal {

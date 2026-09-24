@@ -26,7 +26,8 @@ docker compose down
 - 用户注册、登录、JWT 认证和 RBAC 权限校验
 - 活动记录新增、编辑、删除、分类筛选和分页列表
 - CarbonFactor 按地区与分类匹配并自动计算 `carbon_value`
-- 仪表盘展示今日、本周、本月碳排放和趋势图
+- 减排台账按日期登记减排措施、减少量与单位，同人同日同措施去重，支持调整、移除并按日期重新汇总
+- 仪表盘展示今日、本周、本月的原排放、减排量、净排放和趋势图
 - 目标管理展示目标完成进度和到期区间
 - 排行榜按地区和时间段查看用户低碳排名
 - 管理员查看操作审计日志
@@ -120,6 +121,7 @@ npm run dev
 - User：`database/init.sql` → `backend/src/models/user.ts` → `backend/src/services/userService.ts` → `backend/src/controllers/userController.ts` → `backend/src/routes/users.ts` → `frontend/src/api/user.ts` → `frontend/src/stores/userStore.ts` → `frontend/src/pages/Profile.tsx`
 - Activity：`database/init.sql` → `backend/src/models/activity.ts` → `backend/src/services/activityService.ts` → `backend/src/controllers/activityController.ts` → `backend/src/routes/activities.ts` → `frontend/src/api/activity.ts` → `frontend/src/stores/activityStore.ts` → `frontend/src/pages/Activities.tsx`
 - Goal：`database/init.sql` → `backend/src/models/goal.ts` → `backend/src/services/goalService.ts` → `backend/src/controllers/goalController.ts` → `backend/src/routes/goals.ts` → `frontend/src/api/goal.ts` → `frontend/src/stores/goalStore.ts` → `frontend/src/pages/Goals.tsx`
+- ReductionRecord：`database/init.sql` → `backend/src/models/reductionRecord.ts` → `backend/src/services/reductionService.ts` → `backend/src/controllers/reductionController.ts` → `backend/src/routes/reductions.ts` → `frontend/src/api/reduction.ts` → `frontend/src/stores/reductionStore.ts` → `frontend/src/pages/Reductions.tsx`
 - CarbonFactor：`database/init.sql` → `backend/src/models/carbonFactor.ts` → `backend/src/services/factorService.ts` → `backend/src/controllers/factorController.ts` → `backend/src/routes/factors.ts` → `frontend/src/api/factor.ts` → `frontend/src/pages/Activities.tsx`
 
 ## 横切关注点
@@ -143,6 +145,13 @@ npm run dev
 - 后端引用：`backend/src/constants/errorCodes.ts`、`backend/src/constants/logTemplates.ts`、`backend/src/models/goal.ts`、`backend/src/services/goalService.ts`、`backend/src/routes/goals.ts`
 - 前端定义：`frontend/src/constants/goal.ts`
 - 前端引用：`frontend/src/constants/errorCodes.ts`、`frontend/src/constants/messages.ts`、`frontend/src/types/entities.ts`、`frontend/src/api/goal.ts`、`frontend/src/components/common/GoalProgressCard.tsx`、`frontend/src/pages/Goals.tsx`、`frontend/src/utils/formatters.ts`
+
+### ReductionUnit
+
+- 后端定义：`backend/src/constants/reduction.ts`
+- 后端引用：`backend/src/constants/errorCodes.ts`、`backend/src/constants/logTemplates.ts`、`backend/src/models/reductionRecord.ts`、`backend/src/services/reductionService.ts`、`backend/src/routes/reductions.ts`
+- 前端定义：`frontend/src/constants/reduction.ts`
+- 前端引用：`frontend/src/constants/errorCodes.ts`、`frontend/src/types/entities.ts`、`frontend/src/api/reduction.ts`、`frontend/src/stores/reductionStore.ts`、`frontend/src/pages/Reductions.tsx`、`frontend/src/hooks/useCarbonStats.ts`、`frontend/src/components/common/CarbonStatCard.tsx`、`frontend/src/components/common/CarbonTrendChart.tsx`
 
 ## 强制分层与耦合设计
 

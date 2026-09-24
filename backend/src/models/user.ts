@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Activity } from './activity';
 import { Goal } from './goal';
+import { ReductionRecord } from './reductionRecord';
 import { Role } from './role';
 
 @Entity('users')
@@ -31,6 +32,9 @@ export class User {
 
   @OneToMany(() => Goal, (goal) => goal.user)
   goals!: Goal[];
+
+  @OneToMany(() => ReductionRecord, (reductionRecord) => reductionRecord.user)
+  reductionRecords!: ReductionRecord[];
 
   @ManyToMany(() => Role, (role) => role.users, { eager: true })
   @JoinTable({

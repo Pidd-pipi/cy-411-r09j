@@ -10,6 +10,7 @@ import { AppError } from '../utils/AppError';
 import { calculateCarbonValue } from '../utils/carbonCalculator';
 import { logTemplate } from '../utils/logger';
 import { FactorService } from './factorService';
+import { ReductionService } from './reductionService';
 import { UserService } from './userService';
 
 export interface ActivityInput {
@@ -26,7 +27,8 @@ export class ActivityService {
   constructor(
     @InjectRepository(Activity) private readonly activityRepo: Repository<Activity>,
     private readonly factorService: FactorService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly reductionService: ReductionService
   ) {}
 
   async list(userId: number, category?: ActivityCategory, start?: string, end?: string) {
@@ -105,12 +107,16 @@ export class ActivityService {
 
   async summarize(userId: number, start: string, end: string) {
     const rows = await this.list(userId, undefined, start, end);
-    const total = rows.reduce((sum, row) => sum + Number(row.carbonValue), 0);
+    const grossTotal = rows.reduce((sum, row) => sum + Number(row.carbonValue), 0);
     const byCategory = Object.values(ActivityCategory).map((category) => ({
       category,
       value: rows.filter((row) => row.category === category).reduce((sum, row) => sum + Number(row.carbonValue), 0)
     }));
-    return { total: Number(total.toFixed(2)), byCategory, rows };
+    const total = Number(grossTotal.toFixed(2));
+    const { totalReduction, rows: reductionRows } = await this.reductionService.total(userId, start, end);
+    const netTotal = Number(Math.max(0, grossTotal - totalReduction).toFixed(2));
+    logTemplate('info', 'REDUCTION_TOTAL_CALCULATED', { userId, start, end, reduction: totalReduction, net: netTotal });
+    return { total, grossTotal: total, reductionTotal: totalReduction, netTotal, byCategory, rows, reductionRows };
   }
 }
 
